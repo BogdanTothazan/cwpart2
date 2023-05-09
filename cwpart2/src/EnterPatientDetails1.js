@@ -13,9 +13,9 @@ function EnterPatientDetails() {
 
     return (
         <>
-            <div class="div2">{/*create a div to show all the components*/}
+            <div class="div2">{/create a div to show all the components/}
                 <MyHeader />
-                <BackLink href="/">Back</BackLink>{/*Takes you back to main menu change this*/}
+                <BackLink href="/">Back</BackLink>{/Takes you back to main menu change this/}
 
                 <MyInput />
                 <br />
