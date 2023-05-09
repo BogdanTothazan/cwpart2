@@ -1,3 +1,11 @@
+//w1827398 zakariya elkhalat start
+import jq from 'jquery';
+import './EnterStyle.css';
+import './EnterStyle2.css';
+import InputField from '@govuk-react/input-field';
+import BackLink from '@govuk-react/back-link';
+//w1827398 zakariya elkhalat end
+
 import TopNav from '@govuk-react/top-nav';
 import Heading from '@govuk-react/heading';
 import Button from '@govuk-react/button';
@@ -15,7 +23,6 @@ import { useNavigate } from 'react-router-dom';
 //muhammad azhar w1794998 start
 import DatePicker from 'react-datepicker';
 import { createContext } from 'react';
-import '../Layout.css';
 import 'react-datepicker/dist/react-datepicker.css';
 export const CurrentContext = createContext(null);
 //muhammad azhar w1794998 end
@@ -24,9 +31,9 @@ export const CurrentContext = createContext(null);
 
 
 
-function Choose () {
+function Choose() {
 
-    
+
 
     const Home = () => {
         return (
@@ -34,7 +41,7 @@ function Choose () {
 
                 <TopNav />
                 <Heading  > GP Registration </Heading>
-                
+
 
                 <fieldset>
                     <h1>Register Online</h1>
@@ -153,10 +160,10 @@ function Choose () {
 
             return errors;
         };
-        
 
 
-        
+
+
 
         return (
             <div>
@@ -173,7 +180,7 @@ function Choose () {
                             value={selectedOption}
                             onChange={(e) => setSelectedOption(e.target.value)}
                         >
-                            
+
                             <option value="option1">Patients</option>
                             <option value="option2">Doctors</option>
                             <option value="option3">Receptionsts</option>
@@ -281,7 +288,7 @@ function Choose () {
                 </fieldset>
 
 
-                
+
 
                 <Footer />
             </div>
@@ -346,7 +353,7 @@ function Choose () {
             }
         }, [errors, isSubmitting, submitForm]);
 
-        
+
 
         const validate = () => {
             let errors = {};
@@ -376,7 +383,7 @@ function Choose () {
 
 
 
-        
+
 
         return (
             <div>
@@ -384,9 +391,9 @@ function Choose () {
                 <TopNav serviceTitle="Register for a GP" />
                 <u><GovUKTextLink to="/"><span>&#8592;</span>Back</GovUKTextLink></u>
 
-                
-                    
-                    <form onSubmit={handleSubmit}>
+
+
+                <form onSubmit={handleSubmit}>
                     <fieldset>
                         <h2>Please enter your details below</h2>
                         <Label htmlFor="firstName">First Name</Label>
@@ -427,14 +434,14 @@ function Choose () {
                         <br />
                         <br />
                         <Button type="submit">Register</Button>
-                        </fieldset>
-                    
-                    </form>
-                
+                    </fieldset>
+
+                </form>
+
 
                 <Footer />
 
-                
+
             </div>
         );
     };
@@ -601,9 +608,9 @@ function Choose () {
                     <GovUKButtonNavigate to="/view-app"> View </GovUKButtonNavigate>
                     <br></br>
                     <h2> Patient Records </h2>
-                    <GovUKButtonNavigate> View </GovUKButtonNavigate>
+                    <GovUKButtonNavigate to="/enter1"> View </GovUKButtonNavigate>
                     <br></br>
-                    <GovUKButtonNavigate> Update </GovUKButtonNavigate>
+                    <GovUKButtonNavigate to="/enter2"> Update </GovUKButtonNavigate>
                     <br></br>
                     <h2> Medical Records </h2>
                     <GovUKButtonNavigate> View </GovUKButtonNavigate>
@@ -874,8 +881,190 @@ function Choose () {
     };
     //muhammad azhar w1794998 end
 
+
+    //w1827398 zakariya elkhalat start
+
+    const Enter1 = () => {
+
+        const [nextPage, setNextPage] = useState("/ErrorPage");
+        const [inputComplete, setInputComplete] = useState(false);
+
+        function nhsNumberCapture(e) {
+            CurrentContext.nhsNumberInput = e.target.value;
+        }
+
+        function FindRecords() {
+            var patientData = {
+                "NhsNo": CurrentContext.nhsNumberInput
+            }
+            var url_recordfinder = 'http://localhost:4000/RecordFinder.php';
+
+            jq.ajax({
+                type: "POST",
+                url: url_recordfinder,
+                mode: "no-core",
+                data: patientData,
+
+                success(data) {
+                    localStorage.setItem("returnData", data);
+                    console.log(data);
+                    if (data == 0) {
+                        setNextPage("/ErrorPage");
+                    } else {
+                        var json = jq.parseJSON(data)
+
+                        CurrentContext.Forename = json[0].Forename;
+                        CurrentContext.Surname = json[0].Surname;
+                        CurrentContext.PersonDOB = json[0].PersonDOB;
+
+                        if (json[0].GenderCode == 1) {
+                            CurrentContext.GenderCode = "Male";
+                        } else {
+                            CurrentContext.GenderCode = "Female";
+                        }
+
+                        CurrentContext.Postcode = json[0].Postcode;
+                        console.log(CurrentContext.Forename);
+                        console.log(CurrentContext.Surname);
+                        console.log(CurrentContext.PersonDOB);
+                        console.log(CurrentContext.GenderCode);
+                        console.log(CurrentContext.Postcode);
+
+                        setNextPage("/ViewMedicalRecords");
+                    }
+                }
+            });
+        }
+
+
+
+        return (
+
+
+            <div>
+
+                <TopNav serviceTitle="View Medical Records" />
+                <div className="backlink-container">
+                    <div className="backButton"><GovUKTextLink to="/options"> Back </GovUKTextLink></div>
+                </div>
+                <br></br>
+
+                <div2><h3>Please enter your details below</h3></div2>
+
+                <fieldset>
+
+                    <InputField>First Name </InputField>
+
+                    <InputField>Surname </InputField>
+
+                    <InputField onInput={nhsNumberCapture}> NHSNumber </InputField>
+
+
+                    <br></br>
+                    <Button onClick={FindRecords}> Confirm &gt; </Button>
+                </fieldset>
+                <Footer />
+
+
+
+            </div>
+
+
+        );
+    };
+
+    const Enter2 = () => {
+
+        const [nextPage, setNextPage] = useState("/ErrorPage");
+        const [inputComplete, setInputComplete] = useState(false);
+
+        function nhsNumberCapture(e) {
+            CurrentContext.nhsNumberInput = e.target.value;
+        }
+
+        function FindRecords() {
+            var patientData = {
+                "NhsNo": CurrentContext.nhsNumberInput
+            }
+            var url_recordfinder = 'http://localhost:4000/RecordFinder.php';
+
+            jq.ajax({
+                type: "POST",
+                url: url_recordfinder,
+                mode: "no-core",
+                data: patientData,
+
+                success(data) {
+                    localStorage.setItem("returnData", data);
+                    console.log(data);
+                    if (data == 0) {
+                        setNextPage("/ErrorPage");
+                    } else {
+                        var json = jq.parseJSON(data)
+
+                        CurrentContext.Forename = json[0].Forename;
+                        CurrentContext.Surname = json[0].Surname;
+                        CurrentContext.PersonDOB = json[0].PersonDOB;
+
+                        if (json[0].GenderCode == 1) {
+                            CurrentContext.GenderCode = "Male";
+                        } else {
+                            CurrentContext.GenderCode = "Female";
+                        }
+
+                        CurrentContext.Postcode = json[0].Postcode;
+                        console.log(CurrentContext.Forename);
+                        console.log(CurrentContext.Surname);
+                        console.log(CurrentContext.PersonDOB);
+                        console.log(CurrentContext.GenderCode);
+                        console.log(CurrentContext.Postcode);
+
+                        setNextPage("/ViewPatientRecords");
+                    }
+                }
+            });
+        }
+
+
+
+        return (
+
+
+            <div>
+
+                <TopNav serviceTitle="View Patient Records" />
+                <div className="backlink-container">
+                    <div className="backButton"><GovUKTextLink to="/options"> Back </GovUKTextLink></div>
+                </div>
+                <br></br>
+
+                <div2><h3>Please enter your details below</h3></div2>
+
+                <fieldset>
+
+                    <InputField>First Name </InputField>
+
+                    <InputField>Surname </InputField>
+
+                    <InputField onInput={nhsNumberCapture}> NHSNumber </InputField>
+
+
+                    <br></br>
+                    <Button onClick={FindRecords}> Confirm &gt; </Button>
+                </fieldset>
+                <Footer />
+
+
+
+            </div>
+
+
+        );
+    };
+    // w1827398 zakariya elkhalat end
+
     return (
-       <>
+        <>
 
 
             <Router>
@@ -892,10 +1081,15 @@ function Choose () {
                     <Route path="/view-app" element={<ViewApp />} />
                     <Route path="/cancel-app" element={<CancelApp />} />
                     {/* muhammad azhar w1794998 end */}
+
+                    {/* w1827398 zakariya elkhalat start */}
+                    <Route path="/enter1" element={<Enter1 />} />
+                    <Route path="/enter2" element={<Enter2 />} />
+                    {/* w1827398 zakariya elkhalat end */}
                 </Routes>
             </Router>
 
-        </> 
+        </>
 
     );
 }

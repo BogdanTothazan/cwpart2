@@ -1,5 +1,5 @@
 import React from 'react';
-import  Choose  from './components/Choose';
+import  Choose  from './Choose';
 
 
 
